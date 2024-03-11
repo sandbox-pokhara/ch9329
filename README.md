@@ -15,7 +15,35 @@ pip install ch9329
 ```python
 import ch9329
 
-# usage examples here
+"""
+ctrl:
+    control_left
+    shift_left
+    alt_left
+    gui_left
+    control_right
+    shift_right
+    alt_right
+    gui_right
+
+"""
+
+ch9329.keyboard.press_and_release(key="a", ctrl="control_left")
+ch9329.keyboard.write(text="HEllo@World;")
+
+"""
+button:
+    ST
+    NU - NULL for releasing buttons
+    LE - Left button
+    RI - Right button
+    CE
+"""
+
+ch9329.mouse.move(x=100, y=300)
+ch9329.mouse.press(button="LE")
+ch9329.mouse.move(x=1000, y=1000)
+
 ```
 
 ## License
