@@ -3,68 +3,40 @@ import time
 
 from serial import Serial
 
-hex_dict = {
-    "ST": b"\x02",
-    "NU": b"\x00",
-    "LE": b"\x01",
-    "RI": b"\x02",
-    "CE": b"\x04",
+from ch9329.utils import get_packet
+
+ctrl_to_hex_mapping = {
+    "null": b"\x00",
+    "left": b"\x01",
+    "right": b"\x02",
+    "center": b"\x04",
 }
+
+HEAD = b"\x57\xab"  # Frame header
+ADDR = b"\x00"  # Address
+CMD = b"\x04"  # Command
+LEN = b"\x07"  # Data length
 
 
 def send_data_absolute(
     ser: Serial,
     x: int,
     y: int,
-    ctrl: str = "",
-    X_MAX: int = 1920,
-    Y_MAX: int = 1080,
+    ctrl: str = "null",
+    x_max: int = 1920,
+    y_max: int = 1080,
 ) -> None:
-    HEAD = b"\x57\xab"  # Frame header
-    ADDR = b"\x00"  # Address
-    CMD = b"\x04"  # Command
-    LEN = b"\x07"  # Data length
-    DATA = bytearray(b"\x02")  # Data
-
-    if ctrl == "":
-        DATA.append(0)
-    elif isinstance(ctrl, int):
-        DATA.append(ctrl)
+    data = b"\x02"
+    data += ctrl_to_hex_mapping[ctrl]
+    x_cur = (4096 * x) // x_max
+    y_cur = (4096 * y) // y_max
+    data += x_cur.to_bytes(2, byteorder="little")
+    data += y_cur.to_bytes(2, byteorder="little")
+    if len(data) < 7:
+        data += b"\x00" * (7 - len(data))
     else:
-        DATA += hex_dict[ctrl]
-
-    X_Cur = (4096 * x) // X_MAX
-    Y_Cur = (4096 * y) // Y_MAX
-    DATA += X_Cur.to_bytes(2, byteorder="little")
-    DATA += Y_Cur.to_bytes(2, byteorder="little")
-
-    if len(DATA) < 7:
-        DATA += b"\x00" * (7 - len(DATA))
-    else:
-        DATA = DATA[:7]
-
-    HEAD_hex_list = list(HEAD)
-    HEAD_add_hex_list = sum(HEAD_hex_list)
-
-    DATA_hex_list = list(DATA)
-    DATA_add_hex_list = sum(DATA_hex_list)
-
-    try:
-        SUM = (
-            sum(
-                [
-                    HEAD_add_hex_list,
-                    int.from_bytes(ADDR, byteorder="big"),
-                    int.from_bytes(CMD, byteorder="big"),
-                    int.from_bytes(LEN, byteorder="big"),
-                    DATA_add_hex_list,
-                ]
-            )
-            % 256
-        )
-    except OverflowError:
-        print("int too big to convert")
-    packet = HEAD + ADDR + CMD + LEN + DATA + bytes([SUM])
+        data = data[:7]
+    packet = get_packet(HEAD, ADDR, CMD, LEN, data)
     ser.write(packet)
 
 
@@ -75,22 +47,19 @@ def move(
     monitor_width: int = 1920,
     monitor_height: int = 1080,
 ) -> None:
-    send_data_absolute(
-        ser=ser, x=x, y=y, X_MAX=monitor_width, Y_MAX=monitor_height
-    )
+    send_data_absolute(ser, x, y, "null", monitor_width, monitor_height)
 
 
-def press(ser: Serial, button: str) -> None:
-    send_data_absolute(ser=ser, x=0, y=0, ctrl=button)
+def press(ser: Serial, button: str = "left") -> None:
+    send_data_absolute(ser, 0, 0, button)
 
 
 def release(ser: Serial) -> None:
-    send_data_absolute(ser=ser, x=0, y=0, ctrl="NU")
+    send_data_absolute(ser, 0, 0, "null")
 
 
-def click(ser: Serial, button: str) -> None:
-    send_data_absolute(ser=ser, x=0, y=0, ctrl=button)
-    time.sleep(
-        random.uniform(0.1, 0.45)
-    )  # 100 to 450 milliseconds delay for simulating natural behavior
-    send_data_absolute(ser=ser, x=0, y=0, ctrl="NU")
+def click(ser: Serial, button: str = "left") -> None:
+    press(ser, button)
+    # 100 to 450 milliseconds delay for simulating natural behavior
+    time.sleep(random.uniform(0.1, 0.45))
+    release(ser)
