@@ -2,13 +2,25 @@ import random
 import time
 
 from serial import Serial
-from serial_com import send
 
-hex_dict = {"ST": b"\x02", "NU": b"\x00", "LE": b"\x01", "RI": b"\x02", "CE": b"\x04"}
+hex_dict = {
+    "ST": b"\x02",
+    "NU": b"\x00",
+    "LE": b"\x01",
+    "RI": b"\x02",
+    "CE": b"\x04",
+}
 
 
-def send_data_absolute(x: int, y: int, ctrl: str = "", X_MAX=1920, Y_MAX=1080) -> None:
-    HEAD = b"\x57\xAB"  # Frame header
+def send_data_absolute(
+    ser: Serial,
+    x: int,
+    y: int,
+    ctrl: str = "",
+    X_MAX: int = 1920,
+    Y_MAX: int = 1080,
+) -> None:
+    HEAD = b"\x57\xab"  # Frame header
     ADDR = b"\x00"  # Address
     CMD = b"\x04"  # Command
     LEN = b"\x07"  # Data length
@@ -53,24 +65,32 @@ def send_data_absolute(x: int, y: int, ctrl: str = "", X_MAX=1920, Y_MAX=1080) -
     except OverflowError:
         print("int too big to convert")
     packet = HEAD + ADDR + CMD + LEN + DATA + bytes([SUM])
-    send(packet)
+    ser.write(packet)
 
 
-def move(x: int, y: int, monitor_width=1920, monitor_height=1080) -> None:
-    send_data_absolute(x=x, y=y, X_MAX=monitor_width, Y_MAX=monitor_height)
+def move(
+    ser: Serial,
+    x: int,
+    y: int,
+    monitor_width: int = 1920,
+    monitor_height: int = 1080,
+) -> None:
+    send_data_absolute(
+        ser=ser, x=x, y=y, X_MAX=monitor_width, Y_MAX=monitor_height
+    )
 
 
-def press(button: str) -> None:
-    send_data_absolute(x=0, y=0, ctrl=button)
+def press(ser: Serial, button: str) -> None:
+    send_data_absolute(ser=ser, x=0, y=0, ctrl=button)
 
 
-def release() -> None:
-    send_data_absolute(x=0, y=0, ctrl="NU")
+def release(ser: Serial) -> None:
+    send_data_absolute(ser=ser, x=0, y=0, ctrl="NU")
 
 
-def click(button: str) -> None:
-    send_data_absolute(x=0, y=0, ctrl=button)
+def click(ser: Serial, button: str) -> None:
+    send_data_absolute(ser=ser, x=0, y=0, ctrl=button)
     time.sleep(
         random.uniform(0.1, 0.45)
     )  # 100 to 450 milliseconds delay for simulating natural behavior
-    send_data_absolute(x=0, y=0, ctrl="NU")
+    send_data_absolute(ser=ser, x=0, y=0, ctrl="NU")
