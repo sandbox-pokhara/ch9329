@@ -14,6 +14,7 @@ pip install ch9329
 
 ```python
 import ch9329
+from ch9329.serial_com import ser
 
 """
 ctrl:
@@ -43,6 +44,8 @@ button:
 ch9329.mouse.move(x=100, y=300)
 ch9329.mouse.press(button="LE")
 ch9329.mouse.move(x=1000, y=1000)
+
+ser.close()
 
 ```
 
