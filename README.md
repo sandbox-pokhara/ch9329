@@ -14,7 +14,9 @@ pip install ch9329
 
 ```python
 import ch9329
-from ch9329.serial_com import ser
+from serial import Serial
+
+ser = Serial("COM3", 9600, timeout=1)
 
 """
 ctrl:
@@ -29,8 +31,8 @@ ctrl:
 
 """
 
-ch9329.keyboard.press_and_release(key="a", ctrl="control_left")
-ch9329.keyboard.write(text="HEllo@World;")
+ch9329.keyboard.press_and_release(ser = ser, key="a", ctrl="control_left")
+ch9329.keyboard.write(ser = ser, text="HEllo@World;")
 
 """
 button:
@@ -41,9 +43,9 @@ button:
     CE
 """
 
-ch9329.mouse.move(x=100, y=300)
-ch9329.mouse.press(button="LE")
-ch9329.mouse.move(x=1000, y=1000)
+ch9329.mouse.move(ser = ser, x=100, y=300)
+ch9329.mouse.press(ser = ser, button="LE")
+ch9329.mouse.move(ser = ser, x=1000, y=1000)
 
 ser.close()
 

@@ -1,5 +1,3 @@
-from serial_com import send
-
 from ascii_to_ch9329 import HID_KEY_ALT_LEFT
 from ascii_to_ch9329 import HID_KEY_ALT_RIGHT
 from ascii_to_ch9329 import HID_KEY_CONTROL_LEFT
@@ -9,6 +7,7 @@ from ascii_to_ch9329 import HID_KEY_GUI_RIGHT
 from ascii_to_ch9329 import HID_KEY_SHIFT_LEFT
 from ascii_to_ch9329 import HID_KEY_SHIFT_RIGHT
 from ascii_to_ch9329 import conv_table
+from serial import Serial
 
 
 # Function to convert ASCII characters to HID keycodes
@@ -40,9 +39,9 @@ def ascii_to_ch9329(key: str):
         return None
 
 
-def press(key: str, ctrl="") -> None:
+def press(ser: Serial, key: str, ctrl: str = "") -> None:
     # Convert character to data packet
-    HEAD = b"\x57\xAB"  # Frame header
+    HEAD = b"\x57\xab"  # Frame header
     ADDR = b"\x00"  # Address
     CMD = b"\x02"  # Command
     LEN = b"\x08"  # Data length
@@ -71,6 +70,10 @@ def press(key: str, ctrl="") -> None:
                 DATA += b"\x00"
             DATA += b"\x00"
             DATA += keycode
+        else:
+            DATA += b"\x00"
+    else:
+        DATA += b"\x00"
 
     if len(DATA) < 8:
         DATA += b"\x00" * (8 - len(DATA))
@@ -107,18 +110,18 @@ def press(key: str, ctrl="") -> None:
         print("int too big to convert")
         return False
     packet = HEAD + ADDR + CMD + LEN + DATA + bytes([SUM])  # Data packet
-    send(packet)
+    ser.write(packet)
 
 
-def release() -> None:
-    press("")
+def release(ser: Serial) -> None:
+    press(ser=ser, key="")
 
 
-def press_and_release(key: str, ctrl="") -> None:
-    press(key=key, ctrl=ctrl)
-    release()
+def press_and_release(ser: Serial, key: str, ctrl: str = "") -> None:
+    press(ser=ser, key=key, ctrl=ctrl)
+    release(ser=ser)
 
 
-def write(text: str) -> None:
+def write(ser: Serial, text: str) -> None:
     for char in text:
-        press_and_release(key=char)
+        press_and_release(ser=ser, key=char)
