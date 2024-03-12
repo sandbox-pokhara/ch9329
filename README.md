@@ -12,43 +12,21 @@ pip install ch9329
 
 ## Usage
 
-```python
-import ch9329
+```py
 from serial import Serial
+
+from ch9329 import keyboard
+from ch9329 import mouse
 
 ser = Serial("COM3", 9600, timeout=1)
 
-"""
-ctrl:
-    control_left
-    shift_left
-    alt_left
-    gui_left
-    control_right
-    shift_right
-    alt_right
-    gui_right
+keyboard.press_and_release(ser, key="a", modifier="ctrl")
+keyboard.write(ser, text="HEllo@World;")
 
-"""
-
-ch9329.keyboard.press_and_release(ser = ser, key="a", ctrl="control_left")
-ch9329.keyboard.write(ser = ser, text="HEllo@World;")
-
-"""
-button:
-    ST
-    NU - NULL for releasing buttons
-    LE - Left button
-    RI - Right button
-    CE
-"""
-
-ch9329.mouse.move(ser = ser, x=100, y=300)
-ch9329.mouse.press(ser = ser, button="LE")
-ch9329.mouse.move(ser = ser, x=1000, y=1000)
+mouse.move(ser, x=500, y=500)
+mouse.click(ser, button="left")
 
 ser.close()
-
 ```
 
 ## License
