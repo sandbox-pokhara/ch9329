@@ -13,6 +13,8 @@ from ch9329.ascii_to_ch9329 import HID_KEY_GUI_RIGHT
 from ch9329.ascii_to_ch9329 import HID_KEY_SHIFT_LEFT
 from ch9329.ascii_to_ch9329 import HID_KEY_SHIFT_RIGHT
 from ch9329.ascii_to_ch9329 import conv_table
+from ch9329.ascii_to_ch9329 import fkey_conv_table
+from ch9329.exceptions import InvalidKeyException
 from ch9329.exceptions import InvalidModifier
 from ch9329.utils import get_packet
 
@@ -54,6 +56,18 @@ def get_ascii_keycode(key: str) -> tuple[int, bytes]:
     return shift, keycode
 
 
+def get_non_ascii_keycode(key: str) -> tuple[int, bytes]:
+    # Handle F keys
+    if key[0].lower() == "f":
+        try:
+            f_key = int(key.lower().replace("f", ""))
+            shift, keycode = fkey_conv_table[f_key]
+            return shift, keycode
+        except (ValueError, IndexError):
+            raise InvalidKeyException
+    raise NotImplementedError(f"Key {key} not implemented.")
+
+
 def send(ser: Serial, key: str = "", modifier: str = "") -> None:
     data = b""
 
@@ -64,9 +78,13 @@ def send(ser: Serial, key: str = "", modifier: str = "") -> None:
         hid = get_modifier_keycode(modifier)
         data += hid
 
-    # ascii keys
     if key:
-        shift, keycode = get_ascii_keycode(key)
+        # ascii keys
+        if len(key) == 1:
+            shift, keycode = get_ascii_keycode(key)
+        # Non ascii keys
+        else:
+            shift, keycode = get_non_ascii_keycode(key)
         if shift:
             data += HID_KEY_SHIFT_LEFT
         else:

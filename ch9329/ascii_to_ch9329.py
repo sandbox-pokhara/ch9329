@@ -305,3 +305,31 @@ conv_table: list[tuple[int, bytes]] = [
     (1, HID_KEY_GRAVE),  # 0x7E ~
     (0, HID_KEY_DELETE),  # 0x7F Delete
 ]
+
+fkey_conv_table: list[tuple[int, bytes]] = [
+    (0, b"\x00"),  # null
+    (0, HID_KEY_F1),
+    (0, HID_KEY_F2),
+    (0, HID_KEY_F3),
+    (0, HID_KEY_F4),
+    (0, HID_KEY_F5),
+    (0, HID_KEY_F6),
+    (0, HID_KEY_F7),
+    (0, HID_KEY_F8),
+    (0, HID_KEY_F9),
+    (0, HID_KEY_F10),
+    (0, HID_KEY_F11),
+    (0, HID_KEY_F12),
+    (0, HID_KEY_F13),
+    (0, HID_KEY_F14),
+    (0, HID_KEY_F15),
+    (0, HID_KEY_F16),
+    (0, HID_KEY_F17),
+    (0, HID_KEY_F18),
+    (0, HID_KEY_F19),
+    (0, HID_KEY_F20),
+    (0, HID_KEY_F21),
+    (0, HID_KEY_F22),
+    (0, HID_KEY_F23),
+    (0, HID_KEY_F24),
+]
