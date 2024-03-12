@@ -1,0 +1,2 @@
+class InvalidModifier(Exception):
+    pass

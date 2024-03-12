@@ -1,127 +1,104 @@
-from ascii_to_ch9329 import HID_KEY_ALT_LEFT
-from ascii_to_ch9329 import HID_KEY_ALT_RIGHT
-from ascii_to_ch9329 import HID_KEY_CONTROL_LEFT
-from ascii_to_ch9329 import HID_KEY_CONTROL_RIGHT
-from ascii_to_ch9329 import HID_KEY_GUI_LEFT
-from ascii_to_ch9329 import HID_KEY_GUI_RIGHT
-from ascii_to_ch9329 import HID_KEY_SHIFT_LEFT
-from ascii_to_ch9329 import HID_KEY_SHIFT_RIGHT
-from ascii_to_ch9329 import conv_table
+import time
+
 from serial import Serial
+
+from ch9329.ascii_to_ch9329 import HID_KEY_ALT_LEFT
+from ch9329.ascii_to_ch9329 import HID_KEY_ALT_RIGHT
+from ch9329.ascii_to_ch9329 import HID_KEY_CONTROL_LEFT
+from ch9329.ascii_to_ch9329 import HID_KEY_CONTROL_RIGHT
+from ch9329.ascii_to_ch9329 import HID_KEY_GUI_LEFT
+from ch9329.ascii_to_ch9329 import HID_KEY_GUI_RIGHT
+from ch9329.ascii_to_ch9329 import HID_KEY_SHIFT_LEFT
+from ch9329.ascii_to_ch9329 import HID_KEY_SHIFT_RIGHT
+from ch9329.ascii_to_ch9329 import conv_table
+from ch9329.exceptions import InvalidModifier
+from ch9329.utils import get_packet
+
+# Convert character to data packet
+HEAD = b"\x57\xab"  # Frame header
+ADDR = b"\x00"  # Address
+CMD = b"\x02"  # Command
+LEN = b"\x08"  # Data length
+
+
+def get_modifier_keycode(key: str):
+    if key == "ctrl":
+        return HID_KEY_CONTROL_LEFT
+    if key == "control_left":
+        return HID_KEY_CONTROL_LEFT
+    if key == "shift":
+        return HID_KEY_SHIFT_LEFT
+    if key == "shift_left":
+        return HID_KEY_SHIFT_LEFT
+    if key == "alt_left":
+        return HID_KEY_ALT_LEFT
+    if key == "gui_left":
+        return HID_KEY_GUI_LEFT
+    if key == "control_right":
+        return HID_KEY_CONTROL_RIGHT
+    if key == "shift_right":
+        return HID_KEY_SHIFT_RIGHT
+    if key == "alt_right":
+        return HID_KEY_ALT_RIGHT
+    if key == "gui_right":
+        return HID_KEY_GUI_RIGHT
+    raise InvalidModifier
 
 
 # Function to convert ASCII characters to HID keycodes
-def ascii_to_ch9329(key: str):
-    if key == "control_left":
-        return 0, HID_KEY_CONTROL_LEFT
-    elif key == "shift_left":
-        return 0, HID_KEY_SHIFT_LEFT
-    elif key == "alt_left":
-        return 0, HID_KEY_ALT_LEFT
-    elif key == "gui_left":
-        return 0, HID_KEY_GUI_LEFT
-    elif key == "control_right":
-        return 0, HID_KEY_CONTROL_RIGHT
-    elif key == "shift_right":
-        return 0, HID_KEY_SHIFT_RIGHT
-    elif key == "alt_right":
-        return 0, HID_KEY_ALT_RIGHT
-    elif key == "gui_right":
-        return 0, HID_KEY_GUI_RIGHT
-
+def get_ascii_keycode(key: str) -> tuple[int, bytes]:
     ascii_val = ord(key)  # Get ASCII value of character
-    if ascii_val < len(
-        conv_table
-    ):  # Check if the ASCII value is within the range of the conversion table
-        shift, keycode = conv_table[ascii_val]
-        return keycode, shift
-    else:
-        return None
+    shift, keycode = conv_table[ascii_val]
+    return shift, keycode
 
 
-def press(ser: Serial, key: str, ctrl: str = "") -> None:
-    # Convert character to data packet
-    HEAD = b"\x57\xab"  # Frame header
-    ADDR = b"\x00"  # Address
-    CMD = b"\x02"  # Command
-    LEN = b"\x08"  # Data length
-    DATA = b""  # Data
+def send(ser: Serial, key: str = "", modifier: str = "") -> None:
+    data = b""
 
-    # Control key
-    if ctrl == "":
+    # modifiers
+    if modifier == "":
         pass
-    elif isinstance(ctrl, int):
-        DATA += bytes([ctrl])
     else:
-        result = ascii_to_ch9329(ctrl)
-        if result is not None:
-            _, ctrl = result
-            if ctrl:
-                DATA += ctrl
+        hid = get_modifier_keycode(modifier)
+        data += hid
 
-    # Read data
-    if len(key) >= 1:
-        result = ascii_to_ch9329(key)
-        if result is not None:
-            keycode, shift = result
-            if shift:
-                DATA += HID_KEY_SHIFT_LEFT
-            else:
-                DATA += b"\x00"
-            DATA += b"\x00"
-            DATA += keycode
+    # ascii keys
+    if key:
+        shift, keycode = get_ascii_keycode(key)
+        if shift:
+            data += HID_KEY_SHIFT_LEFT
         else:
-            DATA += b"\x00"
+            data += b"\x00"
+        data += b"\x00"
+        data += keycode
     else:
-        DATA += b"\x00"
+        data += b"\x00"
 
-    if len(DATA) < 8:
-        DATA += b"\x00" * (8 - len(DATA))
+    # fill up remaining bytes
+    if len(data) < 8:
+        data += b"\x00" * (8 - len(data))
     else:
-        DATA = DATA[:8]
+        data = data[:8]
 
-    # Split the values in HEAD and calculate their sum
-    HEAD_hex_list = []
-    for byte in HEAD:
-        HEAD_hex_list.append(byte)
-    HEAD_add_hex_list = sum(HEAD_hex_list)
-
-    # Split the values in DATA and calculate their sum
-    DATA_hex_list = []
-    for byte in DATA:
-        DATA_hex_list.append(byte)
-    DATA_add_hex_list = sum(DATA_hex_list)
-
-    #
-    try:
-        SUM = (
-            sum(
-                [
-                    HEAD_add_hex_list,
-                    int.from_bytes(ADDR, byteorder="big"),
-                    int.from_bytes(CMD, byteorder="big"),
-                    int.from_bytes(LEN, byteorder="big"),
-                    DATA_add_hex_list,
-                ]
-            )
-            % 256
-        )  # Checksum
-    except OverflowError:
-        print("int too big to convert")
-        return False
-    packet = HEAD + ADDR + CMD + LEN + DATA + bytes([SUM])  # Data packet
+    # create packet and send
+    packet = get_packet(HEAD, ADDR, CMD, LEN, data)
     ser.write(packet)
 
 
+def press(ser: Serial, key: str, modifier: str = "") -> None:
+    send(ser, key, modifier)
+
+
 def release(ser: Serial) -> None:
-    press(ser=ser, key="")
+    send(ser, "")
 
 
-def press_and_release(ser: Serial, key: str, ctrl: str = "") -> None:
-    press(ser=ser, key=key, ctrl=ctrl)
-    release(ser=ser)
+def press_and_release(ser: Serial, key: str, modifier: str = "") -> None:
+    press(ser, key, modifier)
+    release(ser)
 
 
-def write(ser: Serial, text: str) -> None:
+def write(ser: Serial, text: str, interval: float = 0.1) -> None:
     for char in text:
-        press_and_release(ser=ser, key=char)
+        press_and_release(ser, char)
+        time.sleep(interval)
