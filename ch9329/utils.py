@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def get_packet(
     head: bytes, addr: bytes, cmd: bytes, length: bytes, data: bytes
 ):

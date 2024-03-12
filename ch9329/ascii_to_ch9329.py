@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # HID KEYCODES
 HID_KEY_NONE = b"\x00"
 HID_KEY_A = b"\x04"
