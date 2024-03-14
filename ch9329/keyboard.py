@@ -80,10 +80,10 @@ def send(ser: Serial, key: str = "", modifier: str = "") -> None:
 
     if key:
         # ascii keys
-        if len(key) == 1:
+        try:
             shift, keycode = get_ascii_keycode(key)
         # Non ascii keys
-        else:
+        except:
             shift, keycode = get_non_ascii_keycode(key)
         if shift:
             data += HID_KEY_SHIFT_LEFT
