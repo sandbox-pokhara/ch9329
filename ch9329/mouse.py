@@ -16,8 +16,10 @@ ctrl_to_hex_mapping = {
 
 HEAD = b"\x57\xab"  # Frame header
 ADDR = b"\x00"  # Address
-CMD = b"\x04"  # Command
-LEN = b"\x07"  # Data length
+CMD_ABS = b"\x04"  # Command for absolute
+CMD_REL = b"\x05"  # Command for relative
+LEN_ABS = b"\x07"  # Data length for absolute
+LEN_REL = b"\x05"  # Data length for relative
 
 
 def send_data_absolute(
@@ -38,11 +40,32 @@ def send_data_absolute(
         data += b"\x00" * (7 - len(data))
     else:
         data = data[:7]
-    packet = get_packet(HEAD, ADDR, CMD, LEN, data)
+    packet = get_packet(HEAD, ADDR, CMD_ABS, LEN_ABS, data)
     ser.write(packet)
 
 
-def move(
+def send_data_relative(
+    ser: Serial, x: int, y: int, ctrl: str = "null"
+) -> None:
+    data = b"\x01"
+    data += ctrl_to_hex_mapping[ctrl]
+    if x < 0:
+        data += (0 - abs(x)).to_bytes(1, byteorder="big", signed=True)
+    else:
+        data += x.to_bytes(1, byteorder="big", signed=True)
+
+    if y < 0:
+        data += (0 - abs(y)).to_bytes(1, byteorder="big", signed=True)
+    else:
+        data += y.to_bytes(1, byteorder="big", signed=True)
+
+    data += b"\x00" * (5 - len(data)) if len(data) < 5 else data[:5]
+
+    packet = get_packet(HEAD, ADDR, CMD_REL, LEN_REL, data)
+    ser.write(packet)
+
+
+def move_abs(
     ser: Serial,
     x: int,
     y: int,
@@ -50,6 +73,14 @@ def move(
     monitor_height: int = 1080,
 ) -> None:
     send_data_absolute(ser, x, y, "null", monitor_width, monitor_height)
+
+
+def move_rel(
+    ser: Serial,
+    x: int,
+    y: int,
+) -> None:
+    send_data_relative(ser, x, y, "null")
 
 
 def press(ser: Serial, button: str = "left") -> None:
