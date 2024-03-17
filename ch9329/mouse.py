@@ -65,22 +65,18 @@ def send_data_relative(
     ser.write(packet)
 
 
-def move_abs(
+def move(
     ser: Serial,
     x: int,
     y: int,
+    relative: bool = False,
     monitor_width: int = 1920,
     monitor_height: int = 1080,
 ) -> None:
-    send_data_absolute(ser, x, y, "null", monitor_width, monitor_height)
-
-
-def move_rel(
-    ser: Serial,
-    x: int,
-    y: int,
-) -> None:
-    send_data_relative(ser, x, y, "null")
+    if relative:
+        send_data_relative(ser, x, y, "null")
+    else:
+        send_data_absolute(ser, x, y, "null", monitor_width, monitor_height)
 
 
 def press(ser: Serial, button: str = "left") -> None:

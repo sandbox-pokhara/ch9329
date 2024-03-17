@@ -23,8 +23,8 @@ ser = Serial("COM3", 9600, timeout=1)
 keyboard.press_and_release(ser, key="a", modifier="ctrl")
 keyboard.write(ser, text="HEllo@World;")
 
-mouse.move_abs(ser, x=500, y=500)
-mouse.move_rel(ser, x = 50, y = 50)
+mouse.move(ser, x=500, y=500)
+mouse.move(ser, x = 50, y = 50, relative = True)
 mouse.click(ser, button="left")
 
 ser.close()
