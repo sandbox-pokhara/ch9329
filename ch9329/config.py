@@ -69,7 +69,8 @@ def set_device_descriptors(
     )
     ser.write(modified_packet)
     return_packet = ser.readline()
-    # this packet is expected in response when the VID and PID are successfully set
+    # this packet is expected in response when the VID and PID are
+    # successfully set
     expected_packet = b"W\xab\x00\x8b\x01\x00\x8e"
     return return_packet == expected_packet  # Compare and return result
 
@@ -77,9 +78,11 @@ def set_device_descriptors(
 def set_device_ids(
     ser: Serial, vid: int, pid: int, custom_descriptor: bool = False
 ) -> bool:
+    # this packet is sent to ch9329 in response to which it sends the
+    # current configuration
     packet = get_packet(
         HEAD, ADDR, CMD_GET_PARA_CFG, LEN_GET_PARA_CFG, DATA_GET_PARA_CFG
-    )  # this packet is sent to ch9329 in response to which it sends the current configuration
+    )
     ser.write(packet)
     received_packet = ser.readline()  # read the current configuration
     vid_bytes = vid.to_bytes(
@@ -98,8 +101,10 @@ def set_device_ids(
     modified_packet = get_packet(
         HEAD, ADDR, CMD_SET_PARA_CFG, LEN_SET_PARA_CFG, modified_data
     )
-    ser.write(modified_packet)  # Send modified packet with the new VID and PID
+    # Send modified packet with the new VID and PID
+    ser.write(modified_packet)
     return_packet = ser.readline()  # Read the response packet
-    # this packet is expected in response when the VID and PID are successfully set
+    # this packet is expected in response when the VID and PID are
+    # successfully set
     expected_packet = b"W\xab\x00\x89\x01\x00\x8c"
     return return_packet == expected_packet  # Compare and return result
