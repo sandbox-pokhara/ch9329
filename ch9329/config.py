@@ -28,7 +28,7 @@ class USBStringDescriptor(Enum):
 CMD_SET_USB_STRING = b"\x0b"
 
 
-def set_descriptor(
+def set_device_descriptors(
     ser: Serial, descriptor_type: USBStringDescriptor, description: str
 ):
     if (
@@ -69,11 +69,12 @@ def set_descriptor(
     )
     ser.write(modified_packet)
     return_packet = ser.readline()
-    expected_packet = b"W\xab\x00\x8b\x01\x00\x8e"  # this packet is expected in response when the VID and PID are successfully set
+    # this packet is expected in response when the VID and PID are successfully set
+    expected_packet = b"W\xab\x00\x8b\x01\x00\x8e"
     return return_packet == expected_packet  # Compare and return result
 
 
-def set_id(
+def set_device_ids(
     ser: Serial, vid: int, pid: int, custom_descriptor: bool = False
 ) -> bool:
     packet = get_packet(
@@ -99,5 +100,6 @@ def set_id(
     )
     ser.write(modified_packet)  # Send modified packet with the new VID and PID
     return_packet = ser.readline()  # Read the response packet
-    expected_packet = b"W\xab\x00\x89\x01\x00\x8c"  # this packet is expected in response when the VID and PID are successfully set
+    # this packet is expected in response when the VID and PID are successfully set
+    expected_packet = b"W\xab\x00\x89\x01\x00\x8c"
     return return_packet == expected_packet  # Compare and return result
