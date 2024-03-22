@@ -1,0 +1,433 @@
+from __future__ import annotations
+
+# HID KEYCODES
+HID_KEY_NONE = b"\x00"
+HID_KEY_A = b"\x04"
+HID_KEY_B = b"\x05"
+HID_KEY_C = b"\x06"
+HID_KEY_D = b"\x07"
+HID_KEY_E = b"\x08"
+HID_KEY_F = b"\x09"
+HID_KEY_G = b"\x0a"
+HID_KEY_H = b"\x0b"
+HID_KEY_I = b"\x0c"
+HID_KEY_J = b"\x0d"
+HID_KEY_K = b"\x0e"
+HID_KEY_L = b"\x0f"
+HID_KEY_M = b"\x10"
+HID_KEY_N = b"\x11"
+HID_KEY_O = b"\x12"
+HID_KEY_P = b"\x13"
+HID_KEY_Q = b"\x14"
+HID_KEY_R = b"\x15"
+HID_KEY_S = b"\x16"
+HID_KEY_T = b"\x17"
+HID_KEY_U = b"\x18"
+HID_KEY_V = b"\x19"
+HID_KEY_W = b"\x1a"
+HID_KEY_X = b"\x1b"
+HID_KEY_Y = b"\x1c"
+HID_KEY_Z = b"\x1d"
+HID_KEY_1 = b"\x1e"
+HID_KEY_2 = b"\x1f"
+HID_KEY_3 = b"\x20"
+HID_KEY_4 = b"\x21"
+HID_KEY_5 = b"\x22"
+HID_KEY_6 = b"\x23"
+HID_KEY_7 = b"\x24"
+HID_KEY_8 = b"\x25"
+HID_KEY_9 = b"\x26"
+HID_KEY_0 = b"\x27"
+HID_KEY_ENTER = b"\x28"
+HID_KEY_ESCAPE = b"\x29"
+HID_KEY_BACKSPACE = b"\x2a"
+HID_KEY_TAB = b"\x2b"
+HID_KEY_SPACE = b"\x2c"
+HID_KEY_MINUS = b"\x2d"
+HID_KEY_EQUAL = b"\x2e"
+HID_KEY_BRACKET_LEFT = b"\x2f"
+HID_KEY_BRACKET_RIGHT = b"\x30"
+HID_KEY_BACKSLASH = b"\x31"
+HID_KEY_EUROPE_1 = b"\x32"
+HID_KEY_SEMICOLON = b"\x33"
+HID_KEY_APOSTROPHE = b"\x34"
+HID_KEY_GRAVE = b"\x35"
+HID_KEY_COMMA = b"\x36"
+HID_KEY_PERIOD = b"\x37"
+HID_KEY_SLASH = b"\x38"
+HID_KEY_CAPS_LOCK = b"\x39"
+HID_KEY_F1 = b"\x3a"
+HID_KEY_F2 = b"\x3b"
+HID_KEY_F3 = b"\x3c"
+HID_KEY_F4 = b"\x3d"
+HID_KEY_F5 = b"\x3e"
+HID_KEY_F6 = b"\x3f"
+HID_KEY_F7 = b"\x40"
+HID_KEY_F8 = b"\x41"
+HID_KEY_F9 = b"\x42"
+HID_KEY_F10 = b"\x43"
+HID_KEY_F11 = b"\x44"
+HID_KEY_F12 = b"\x45"
+HID_KEY_PRINT_SCREEN = b"\x46"
+HID_KEY_SCROLL_LOCK = b"\x47"
+HID_KEY_PAUSE = b"\x48"
+HID_KEY_INSERT = b"\x49"
+HID_KEY_HOME = b"\x4a"
+HID_KEY_PAGE_UP = b"\x4b"
+HID_KEY_DELETE = b"\x4c"
+HID_KEY_END = b"\x4d"
+HID_KEY_PAGE_DOWN = b"\x4e"
+HID_KEY_ARROW_RIGHT = b"\x4f"
+HID_KEY_ARROW_LEFT = b"\x50"
+HID_KEY_ARROW_DOWN = b"\x51"
+HID_KEY_ARROW_UP = b"\x52"
+HID_KEY_NUM_LOCK = b"\x53"
+HID_KEY_KEYPAD_DIVIDE = b"\x54"
+HID_KEY_KEYPAD_MULTIPLY = b"\x55"
+HID_KEY_KEYPAD_SUBTRACT = b"\x56"
+HID_KEY_KEYPAD_ADD = b"\x57"
+HID_KEY_KEYPAD_ENTER = b"\x58"
+HID_KEY_KEYPAD_1 = b"\x59"
+HID_KEY_KEYPAD_2 = b"\x5a"
+HID_KEY_KEYPAD_3 = b"\x5b"
+HID_KEY_KEYPAD_4 = b"\x5c"
+HID_KEY_KEYPAD_5 = b"\x5d"
+HID_KEY_KEYPAD_6 = b"\x5e"
+HID_KEY_KEYPAD_7 = b"\x5f"
+HID_KEY_KEYPAD_8 = b"\x60"
+HID_KEY_KEYPAD_9 = b"\x61"
+HID_KEY_KEYPAD_0 = b"\x62"
+HID_KEY_KEYPAD_DECIMAL = b"\x63"
+HID_KEY_EUROPE_2 = b"\x64"
+HID_KEY_APPLICATION = b"\x65"
+HID_KEY_POWER = b"\x66"
+HID_KEY_KEYPAD_EQUAL = b"\x67"
+HID_KEY_F13 = b"\x68"
+HID_KEY_F14 = b"\x69"
+HID_KEY_F15 = b"\x6a"
+HID_KEY_F16 = b"\x6b"
+HID_KEY_F17 = b"\x6c"
+HID_KEY_F18 = b"\x6d"
+HID_KEY_F19 = b"\x6e"
+HID_KEY_F20 = b"\x6f"
+HID_KEY_F21 = b"\x70"
+HID_KEY_F22 = b"\x71"
+HID_KEY_F23 = b"\x72"
+HID_KEY_F24 = b"\x73"
+HID_KEY_EXECUTE = b"\x74"
+HID_KEY_HELP = b"\x75"
+HID_KEY_MENU = b"\x76"
+HID_KEY_SELECT = b"\x77"
+HID_KEY_STOP = b"\x78"
+HID_KEY_AGAIN = b"\x79"
+HID_KEY_UNDO = b"\x7a"
+HID_KEY_CUT = b"\x7b"
+HID_KEY_COPY = b"\x7c"
+HID_KEY_PASTE = b"\x7d"
+HID_KEY_FIND = b"\x7e"
+HID_KEY_MUTE = b"\x7f"
+HID_KEY_VOLUME_UP = b"\x80"
+HID_KEY_VOLUME_DOWN = b"\x81"
+HID_KEY_LOCKING_CAPS_LOCK = b"\x82"
+HID_KEY_LOCKING_NUM_LOCK = b"\x83"
+HID_KEY_LOCKING_SCROLL_LOCK = b"\x84"
+HID_KEY_KEYPAD_COMMA = b"\x85"
+HID_KEY_KEYPAD_EQUAL_SIGN = b"\x86"
+HID_KEY_KANJI1 = b"\x87"
+HID_KEY_KANJI2 = b"\x88"
+HID_KEY_KANJI3 = b"\x89"
+HID_KEY_KANJI4 = b"\x8a"
+HID_KEY_KANJI5 = b"\x8b"
+HID_KEY_KANJI6 = b"\x8c"
+HID_KEY_KANJI7 = b"\x8d"
+HID_KEY_KANJI8 = b"\x8e"
+HID_KEY_KANJI9 = b"\x8f"
+HID_KEY_LANG1 = b"\x90"
+HID_KEY_LANG2 = b"\x91"
+HID_KEY_LANG3 = b"\x92"
+HID_KEY_LANG4 = b"\x93"
+HID_KEY_LANG5 = b"\x94"
+HID_KEY_LANG6 = b"\x95"
+HID_KEY_LANG7 = b"\x96"
+HID_KEY_LANG8 = b"\x97"
+HID_KEY_LANG9 = b"\x98"
+HID_KEY_ALTERNATE_ERASE = b"\x99"
+HID_KEY_SYSREQ_ATTENTION = b"\x9a"
+HID_KEY_CANCEL = b"\x9b"
+HID_KEY_CLEAR = b"\x9c"
+HID_KEY_PRIOR = b"\x9d"
+HID_KEY_RETURN = b"\x9e"
+HID_KEY_SEPARATOR = b"\x9f"
+HID_KEY_OUT = b"\xa0"
+HID_KEY_OPER = b"\xa1"
+HID_KEY_CLEAR_AGAIN = b"\xa2"
+HID_KEY_CRSEL_PROPS = b"\xa3"
+HID_KEY_EXSEL = b"\xa4"
+
+# RESERVED
+HID_KEY_CONTROL_LEFT = b"\x01"
+HID_KEY_SHIFT_LEFT = b"\x02"
+HID_KEY_ALT_LEFT = b"\x04"
+HID_KEY_GUI_LEFT = b"\x08"
+HID_KEY_CONTROL_RIGHT = b"\x10"
+HID_KEY_SHIFT_RIGHT = b"\x20"
+HID_KEY_ALT_RIGHT = b"\x40"
+HID_KEY_GUI_RIGHT = b"\x80"
+
+HID_MAPPING = {
+    "a": (HID_KEY_A, None),
+    "b": (HID_KEY_B, None),
+    "c": (HID_KEY_C, None),
+    "d": (HID_KEY_D, None),
+    "e": (HID_KEY_E, None),
+    "f": (HID_KEY_F, None),
+    "g": (HID_KEY_G, None),
+    "h": (HID_KEY_H, None),
+    "i": (HID_KEY_I, None),
+    "j": (HID_KEY_J, None),
+    "k": (HID_KEY_K, None),
+    "l": (HID_KEY_L, None),
+    "m": (HID_KEY_M, None),
+    "n": (HID_KEY_N, None),
+    "o": (HID_KEY_O, None),
+    "p": (HID_KEY_P, None),
+    "q": (HID_KEY_Q, None),
+    "r": (HID_KEY_R, None),
+    "s": (HID_KEY_S, None),
+    "t": (HID_KEY_T, None),
+    "u": (HID_KEY_U, None),
+    "v": (HID_KEY_V, None),
+    "w": (HID_KEY_W, None),
+    "x": (HID_KEY_X, None),
+    "y": (HID_KEY_Y, None),
+    "z": (HID_KEY_Z, None),
+    "1": (HID_KEY_1, None),
+    "2": (HID_KEY_2, None),
+    "3": (HID_KEY_3, None),
+    "4": (HID_KEY_4, None),
+    "5": (HID_KEY_5, None),
+    "6": (HID_KEY_6, None),
+    "7": (HID_KEY_7, None),
+    "8": (HID_KEY_8, None),
+    "9": (HID_KEY_9, None),
+    "0": (HID_KEY_0, None),
+    "enter": (HID_KEY_ENTER, None),
+    "esc": (HID_KEY_ESCAPE, None),
+    "escape": (HID_KEY_ESCAPE, None),
+    "backspace": (HID_KEY_BACKSPACE, None),
+    "tab": (HID_KEY_TAB, None),
+    "space": (HID_KEY_SPACE, None),
+    "bracket_left": (HID_KEY_BRACKET_LEFT, None),
+    "bracket_right": (HID_KEY_BRACKET_RIGHT, None),
+    "backslash": (HID_KEY_BACKSLASH, None),
+    "europe_1": (HID_KEY_EUROPE_1, None),
+    "semicolon": (HID_KEY_SEMICOLON, None),
+    "apostrophe": (HID_KEY_APOSTROPHE, None),
+    "grave": (HID_KEY_GRAVE, None),
+    "comma": (HID_KEY_COMMA, None),
+    "period": (HID_KEY_PERIOD, None),
+    "slash": (HID_KEY_SLASH, None),
+    "caps_lock": (HID_KEY_CAPS_LOCK, None),
+    "f1": (HID_KEY_F1, None),
+    "f2": (HID_KEY_F2, None),
+    "f3": (HID_KEY_F3, None),
+    "f4": (HID_KEY_F4, None),
+    "f5": (HID_KEY_F5, None),
+    "f6": (HID_KEY_F6, None),
+    "f7": (HID_KEY_F7, None),
+    "f8": (HID_KEY_F8, None),
+    "f9": (HID_KEY_F9, None),
+    "f10": (HID_KEY_F10, None),
+    "f11": (HID_KEY_F11, None),
+    "f12": (HID_KEY_F12, None),
+    "print_screen": (HID_KEY_PRINT_SCREEN, None),
+    "scroll_lock": (HID_KEY_SCROLL_LOCK, None),
+    "pause": (HID_KEY_PAUSE, None),
+    "insert": (HID_KEY_INSERT, None),
+    "home": (HID_KEY_HOME, None),
+    "page_up": (HID_KEY_PAGE_UP, None),
+    "delete": (HID_KEY_DELETE, None),
+    "del": (HID_KEY_DELETE, None),
+    "end": (HID_KEY_END, None),
+    "page_down": (HID_KEY_PAGE_DOWN, None),
+    "arrow_right": (HID_KEY_ARROW_RIGHT, None),
+    "arrow_left": (HID_KEY_ARROW_LEFT, None),
+    "arrow_down": (HID_KEY_ARROW_DOWN, None),
+    "arrow_up": (HID_KEY_ARROW_UP, None),
+    "num_lock": (HID_KEY_NUM_LOCK, None),
+    "keypad_divide": (HID_KEY_KEYPAD_DIVIDE, None),
+    "keypad_multiply": (HID_KEY_KEYPAD_MULTIPLY, None),
+    "keypad_subtract": (HID_KEY_KEYPAD_SUBTRACT, None),
+    "keypad_add": (HID_KEY_KEYPAD_ADD, None),
+    "keypad_enter": (HID_KEY_KEYPAD_ENTER, None),
+    "keypad_1": (HID_KEY_KEYPAD_1, None),
+    "keypad_2": (HID_KEY_KEYPAD_2, None),
+    "keypad_3": (HID_KEY_KEYPAD_3, None),
+    "keypad_4": (HID_KEY_KEYPAD_4, None),
+    "keypad_5": (HID_KEY_KEYPAD_5, None),
+    "keypad_6": (HID_KEY_KEYPAD_6, None),
+    "keypad_7": (HID_KEY_KEYPAD_7, None),
+    "keypad_8": (HID_KEY_KEYPAD_8, None),
+    "keypad_9": (HID_KEY_KEYPAD_9, None),
+    "keypad_0": (HID_KEY_KEYPAD_0, None),
+    "keypad_decimal": (HID_KEY_KEYPAD_DECIMAL, None),
+    "europe_2": (HID_KEY_EUROPE_2, None),
+    "application": (HID_KEY_APPLICATION, None),
+    "power": (HID_KEY_POWER, None),
+    "keypad_equal": (HID_KEY_KEYPAD_EQUAL, None),
+    "f13": (HID_KEY_F13, None),
+    "f14": (HID_KEY_F14, None),
+    "f15": (HID_KEY_F15, None),
+    "f16": (HID_KEY_F16, None),
+    "f17": (HID_KEY_F17, None),
+    "f18": (HID_KEY_F18, None),
+    "f19": (HID_KEY_F19, None),
+    "f20": (HID_KEY_F20, None),
+    "f21": (HID_KEY_F21, None),
+    "f22": (HID_KEY_F22, None),
+    "f23": (HID_KEY_F23, None),
+    "f24": (HID_KEY_F24, None),
+    "execute": (HID_KEY_EXECUTE, None),
+    "help": (HID_KEY_HELP, None),
+    "menu": (HID_KEY_MENU, None),
+    "select": (HID_KEY_SELECT, None),
+    "stop": (HID_KEY_STOP, None),
+    "again": (HID_KEY_AGAIN, None),
+    "undo": (HID_KEY_UNDO, None),
+    "cut": (HID_KEY_CUT, None),
+    "copy": (HID_KEY_COPY, None),
+    "paste": (HID_KEY_PASTE, None),
+    "find": (HID_KEY_FIND, None),
+    "mute": (HID_KEY_MUTE, None),
+    "volume_up": (HID_KEY_VOLUME_UP, None),
+    "volume_down": (HID_KEY_VOLUME_DOWN, None),
+    "locking_caps_lock": (HID_KEY_LOCKING_CAPS_LOCK, None),
+    "locking_num_lock": (HID_KEY_LOCKING_NUM_LOCK, None),
+    "locking_scroll_lock": (HID_KEY_LOCKING_SCROLL_LOCK, None),
+    "keypad_comma": (HID_KEY_KEYPAD_COMMA, None),
+    "keypad_equal_sign": (HID_KEY_KEYPAD_EQUAL_SIGN, None),
+    "kanji1": (HID_KEY_KANJI1, None),
+    "kanji2": (HID_KEY_KANJI2, None),
+    "kanji3": (HID_KEY_KANJI3, None),
+    "kanji4": (HID_KEY_KANJI4, None),
+    "kanji5": (HID_KEY_KANJI5, None),
+    "kanji6": (HID_KEY_KANJI6, None),
+    "kanji7": (HID_KEY_KANJI7, None),
+    "kanji8": (HID_KEY_KANJI8, None),
+    "kanji9": (HID_KEY_KANJI9, None),
+    "lang1": (HID_KEY_LANG1, None),
+    "lang2": (HID_KEY_LANG2, None),
+    "lang3": (HID_KEY_LANG3, None),
+    "lang4": (HID_KEY_LANG4, None),
+    "lang5": (HID_KEY_LANG5, None),
+    "lang6": (HID_KEY_LANG6, None),
+    "lang7": (HID_KEY_LANG7, None),
+    "lang8": (HID_KEY_LANG8, None),
+    "lang9": (HID_KEY_LANG9, None),
+    "alternate_erase": (HID_KEY_ALTERNATE_ERASE, None),
+    "sysreq_attention": (HID_KEY_SYSREQ_ATTENTION, None),
+    "cancel": (HID_KEY_CANCEL, None),
+    "clear": (HID_KEY_CLEAR, None),
+    "prior": (HID_KEY_PRIOR, None),
+    "return": (HID_KEY_RETURN, None),
+    "separator": (HID_KEY_SEPARATOR, None),
+    "out": (HID_KEY_OUT, None),
+    "oper": (HID_KEY_OPER, None),
+    "clear_again": (HID_KEY_CLEAR_AGAIN, None),
+    "crsel_props": (HID_KEY_CRSEL_PROPS, None),
+    "exsel": (HID_KEY_EXSEL, None),
+    # modifiers
+    "ctrl": (HID_KEY_CONTROL_LEFT, None),
+    "ctrl_left": (HID_KEY_CONTROL_LEFT, None),
+    "ctrl_right": (HID_KEY_CONTROL_RIGHT, None),
+    "shift": (HID_KEY_SHIFT_LEFT, None),
+    "shift_left": (HID_KEY_SHIFT_LEFT, None),
+    "shift_right": (HID_KEY_SHIFT_RIGHT, None),
+    "alt": (HID_KEY_ALT_LEFT, None),
+    "alt_left": (HID_KEY_ALT_LEFT, None),
+    "alt_right": (HID_KEY_ALT_RIGHT, None),
+    "gui": (HID_KEY_GUI_LEFT, None),
+    "gui_left": (HID_KEY_GUI_LEFT, None),
+    "gui_right": (HID_KEY_GUI_RIGHT, None),
+    # white spaces
+    " ": (HID_KEY_SPACE, None),
+    "\t": (HID_KEY_TAB, None),
+    "\n": (HID_KEY_ENTER, None),
+    # symbols
+    "-": (HID_KEY_MINUS, None),
+    "=": (HID_KEY_EQUAL, None),
+    "[": (HID_KEY_BRACKET_LEFT, None),
+    "]": (HID_KEY_BRACKET_RIGHT, None),
+    "\\": (HID_KEY_BACKSLASH, None),
+    ";": (HID_KEY_SEMICOLON, None),
+    "'": (HID_KEY_APOSTROPHE, None),
+    "`": (HID_KEY_GRAVE, None),
+    ",": (HID_KEY_COMMA, None),
+    ".": (HID_KEY_PERIOD, None),
+    "/": (HID_KEY_SLASH, None),
+    # symbols (shift)
+    "^": (HID_KEY_6, "shift"),
+    "_": (HID_KEY_MINUS, "shift"),
+    "{": (HID_KEY_BRACKET_LEFT, "shift"),
+    "|": (HID_KEY_BACKSLASH, "shift"),
+    "}": (HID_KEY_BRACKET_RIGHT, "shift"),
+    "~": (HID_KEY_GRAVE, "shift"),
+    "!": (HID_KEY_1, "shift"),
+    '"': (HID_KEY_APOSTROPHE, "shift"),
+    "#": (HID_KEY_3, "shift"),
+    "$": (HID_KEY_4, "shift"),
+    "%": (HID_KEY_5, "shift"),
+    "&": (HID_KEY_7, "shift"),
+    "(": (HID_KEY_9, "shift"),
+    ")": (HID_KEY_0, "shift"),
+    "*": (HID_KEY_8, "shift"),
+    "+": (HID_KEY_EQUAL, "shift"),
+    ":": (HID_KEY_SEMICOLON, "shift"),
+    "<": (HID_KEY_COMMA, "shift"),
+    ">": (HID_KEY_PERIOD, "shift"),
+    "?": (HID_KEY_SLASH, "shift"),
+    "@": (HID_KEY_2, "shift"),
+    # shift keys
+    "A": (HID_KEY_A, "shift"),
+    "B": (HID_KEY_B, "shift"),
+    "C": (HID_KEY_C, "shift"),
+    "D": (HID_KEY_D, "shift"),
+    "E": (HID_KEY_E, "shift"),
+    "F": (HID_KEY_F, "shift"),
+    "G": (HID_KEY_G, "shift"),
+    "H": (HID_KEY_H, "shift"),
+    "I": (HID_KEY_I, "shift"),
+    "J": (HID_KEY_J, "shift"),
+    "K": (HID_KEY_K, "shift"),
+    "L": (HID_KEY_L, "shift"),
+    "M": (HID_KEY_M, "shift"),
+    "N": (HID_KEY_N, "shift"),
+    "O": (HID_KEY_O, "shift"),
+    "P": (HID_KEY_P, "shift"),
+    "Q": (HID_KEY_Q, "shift"),
+    "R": (HID_KEY_R, "shift"),
+    "S": (HID_KEY_S, "shift"),
+    "T": (HID_KEY_T, "shift"),
+    "U": (HID_KEY_U, "shift"),
+    "V": (HID_KEY_V, "shift"),
+    "W": (HID_KEY_W, "shift"),
+    "X": (HID_KEY_X, "shift"),
+    "Y": (HID_KEY_Y, "shift"),
+    "Z": (HID_KEY_Z, "shift"),
+}
+
+
+MODIFIERS = {
+    "ctrl",
+    "ctrl_left",
+    "ctrl_right",
+    "shift",
+    "shift_left",
+    "shift_right",
+    "alt",
+    "alt_left",
+    "alt_right",
+    "gui",
+    "gui_left",
+    "gui_right",
+}

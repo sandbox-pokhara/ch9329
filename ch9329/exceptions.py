@@ -2,5 +2,5 @@ class InvalidModifier(Exception):
     pass
 
 
-class InvalidKeyException(Exception):
+class InvalidKey(Exception):
     pass

@@ -20,8 +20,12 @@ from ch9329 import mouse
 
 ser = Serial("COM3", 9600, timeout=1)
 
-keyboard.press_and_release(ser, key="a", modifier="ctrl")
-keyboard.write(ser, text="HEllo@World;")
+keyboard.press_and_release(ser, "a", modifier="ctrl")
+keyboard.write(ser, "Hello World\n")
+keyboard.write(ser, "abcdefghijklmnopqrstuvwxyz\n")
+keyboard.write(ser, "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n")
+keyboard.write(ser, "0123456789\n")
+keyboard.write(ser, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~\n")
 
 mouse.move(ser, x=500, y=500)
 mouse.move(ser, x=50, y=50, relative=True)

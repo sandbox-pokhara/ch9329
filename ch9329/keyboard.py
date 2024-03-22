@@ -4,18 +4,11 @@ import time
 
 from serial import Serial
 
-from ch9329.ascii_to_ch9329 import HID_KEY_ALT_LEFT
-from ch9329.ascii_to_ch9329 import HID_KEY_ALT_RIGHT
-from ch9329.ascii_to_ch9329 import HID_KEY_CONTROL_LEFT
-from ch9329.ascii_to_ch9329 import HID_KEY_CONTROL_RIGHT
-from ch9329.ascii_to_ch9329 import HID_KEY_GUI_LEFT
-from ch9329.ascii_to_ch9329 import HID_KEY_GUI_RIGHT
-from ch9329.ascii_to_ch9329 import HID_KEY_SHIFT_LEFT
-from ch9329.ascii_to_ch9329 import HID_KEY_SHIFT_RIGHT
-from ch9329.ascii_to_ch9329 import conv_table
-from ch9329.ascii_to_ch9329 import fkey_conv_table
-from ch9329.exceptions import InvalidKeyException
+from ch9329.exceptions import InvalidKey
 from ch9329.exceptions import InvalidModifier
+from ch9329.hid import HID_KEY_SHIFT_LEFT
+from ch9329.hid import HID_MAPPING
+from ch9329.hid import MODIFIERS
 from ch9329.utils import get_packet
 
 # Convert character to data packet
@@ -25,72 +18,26 @@ CMD = b"\x02"  # Command
 LEN = b"\x08"  # Data length
 
 
-def get_modifier_keycode(key: str):
-    if key == "ctrl":
-        return HID_KEY_CONTROL_LEFT
-    if key == "control_left":
-        return HID_KEY_CONTROL_LEFT
-    if key == "shift":
-        return HID_KEY_SHIFT_LEFT
-    if key == "shift_left":
-        return HID_KEY_SHIFT_LEFT
-    if key == "alt_left":
-        return HID_KEY_ALT_LEFT
-    if key == "gui_left":
-        return HID_KEY_GUI_LEFT
-    if key == "control_right":
-        return HID_KEY_CONTROL_RIGHT
-    if key == "shift_right":
-        return HID_KEY_SHIFT_RIGHT
-    if key == "alt_right":
-        return HID_KEY_ALT_RIGHT
-    if key == "gui_right":
-        return HID_KEY_GUI_RIGHT
-    raise InvalidModifier
-
-
-# Function to convert ASCII characters to HID keycodes
-def get_ascii_keycode(key: str) -> tuple[int, bytes]:
-    ascii_val = ord(key)  # Get ASCII value of character
-    shift, keycode = conv_table[ascii_val]
-    return shift, keycode
-
-
-def get_non_ascii_keycode(key: str) -> tuple[int, bytes]:
-    # Handle F keys
-    if key[0].lower() == "f":
-        try:
-            f_key = int(key.lower().replace("f", ""))
-            shift, keycode = fkey_conv_table[f_key]
-            return shift, keycode
-        except (ValueError, IndexError):
-            raise InvalidKeyException
-    raise NotImplementedError(f"Key {key} not implemented.")
-
-
 def send(ser: Serial, key: str = "", modifier: str = "") -> None:
     data = b""
 
     # modifiers
-    if modifier == "":
-        pass
-    else:
-        hid = get_modifier_keycode(modifier)
+    if modifier:
+        if modifier not in MODIFIERS:
+            raise InvalidModifier(modifier)
+        hid, _ = HID_MAPPING[modifier]
         data += hid
 
     if key:
-        # ascii keys
-        if len(key) == 1:
-            shift, keycode = get_ascii_keycode(key)
-        # Non ascii keys
-        else:
-            shift, keycode = get_non_ascii_keycode(key)
+        if key not in HID_MAPPING:
+            raise InvalidKey(key)
+        hid, shift = HID_MAPPING[key]
         if shift:
             data += HID_KEY_SHIFT_LEFT
         else:
             data += b"\x00"
         data += b"\x00"
-        data += keycode
+        data += hid
     else:
         data += b"\x00"
 
