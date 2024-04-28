@@ -346,6 +346,7 @@ HID_MAPPING = {
     "alt": (HID_KEY_ALT_LEFT, None),
     "alt_left": (HID_KEY_ALT_LEFT, None),
     "alt_right": (HID_KEY_ALT_RIGHT, None),
+    "win": (HID_KEY_GUI_LEFT, None),
     "gui": (HID_KEY_GUI_LEFT, None),
     "gui_left": (HID_KEY_GUI_LEFT, None),
     "gui_right": (HID_KEY_GUI_RIGHT, None),
