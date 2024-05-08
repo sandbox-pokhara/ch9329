@@ -92,3 +92,17 @@ def click(ser: Serial, button: str = "left") -> None:
     # 100 to 450 milliseconds delay for simulating natural behavior
     time.sleep(random.uniform(0.1, 0.45))
     release(ser)
+
+
+# for debugging purpose
+def printer(byts: bytes):
+    for i in byts:
+        print(hex(i).upper(), end=" ")
+    print()
+
+
+if __name__ == "__main__":
+    d = Serial()
+    d.write = printer  # type:ignore
+    send_data_absolute(d, 0, 0, "left")
+    release(d)
