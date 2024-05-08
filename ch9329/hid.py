@@ -169,10 +169,12 @@ HID_KEY_CONTROL_LEFT = b"\x01"
 HID_KEY_SHIFT_LEFT = b"\x02"
 HID_KEY_ALT_LEFT = b"\x04"
 HID_KEY_GUI_LEFT = b"\x08"
+HID_KEY_WIN_LEFT = b"\xe3"
 HID_KEY_CONTROL_RIGHT = b"\x10"
 HID_KEY_SHIFT_RIGHT = b"\x20"
 HID_KEY_ALT_RIGHT = b"\x40"
 HID_KEY_GUI_RIGHT = b"\x80"
+HID_KEY_WIN_RIGHT = b"\xe7"
 
 HID_MAPPING = {
     "a": (HID_KEY_A, None),
@@ -350,7 +352,9 @@ HID_MAPPING = {
     "alt": (HID_KEY_ALT_LEFT, None),
     "alt_left": (HID_KEY_ALT_LEFT, None),
     "alt_right": (HID_KEY_ALT_RIGHT, None),
-    "win": (HID_KEY_GUI_LEFT, None),
+    "win": (HID_KEY_WIN_LEFT, None),
+    "win_left": (HID_KEY_WIN_LEFT, None),
+    "win_right": (HID_KEY_WIN_RIGHT, None),
     "gui": (HID_KEY_GUI_LEFT, None),
     "gui_left": (HID_KEY_GUI_LEFT, None),
     "gui_right": (HID_KEY_GUI_RIGHT, None),
@@ -435,4 +439,7 @@ MODIFIERS = {
     "gui",
     "gui_left",
     "gui_right",
+    "win",
+    "win_left",
+    "win_right",
 }
