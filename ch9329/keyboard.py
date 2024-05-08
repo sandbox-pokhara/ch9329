@@ -86,5 +86,3 @@ if __name__ == "__main__":
     d = Serial()
     d.write = printer  # type:ignore
     press(d, "A")
-    press(d, "A")
-    press(d, "A")
