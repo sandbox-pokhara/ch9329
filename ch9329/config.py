@@ -83,7 +83,10 @@ def get_parameters(ser: Serial):
         HEAD, ADDR, CMD_GET_PARA_CFG, LEN_GET_PARA_CFG, DATA_GET_PARA_CFG
     )
     ser.write(packet)
-    return ser.readline()
+    data = ser.readall()
+    if not data:
+        return ""
+    return data
 
 
 def get_usb_string(ser: Serial, descriptor: USBStringDescriptor):
@@ -95,7 +98,9 @@ def get_usb_string(ser: Serial, descriptor: USBStringDescriptor):
         descriptor.value,
     )
     ser.write(packet)
-    data = ser.readline()
+    data = ser.readall()
+    if not data:
+        return ""
     length = data[6]
     return data[7 : 7 + length].decode()
 
