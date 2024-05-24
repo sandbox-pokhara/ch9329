@@ -17,6 +17,9 @@ from serial import Serial
 
 from ch9329 import keyboard
 from ch9329 import mouse
+from ch9329.config import get_manufacturer
+from ch9329.config import get_product
+from ch9329.config import get_serial_number
 
 ser = Serial("COM3", 9600, timeout=1)
 
@@ -30,6 +33,13 @@ keyboard.write(ser, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~\n")
 mouse.move(ser, x=500, y=500)
 mouse.move(ser, x=50, y=50, relative=True)
 mouse.click(ser, button="left")
+
+print(get_serial_number(ser))
+# 20193152CFBF
+print(get_product(ser))
+# WCH UART TO KB-MS_V1.7
+print(get_manufacturer(ser))
+# WWW.WCH.CN
 
 ser.close()
 ```

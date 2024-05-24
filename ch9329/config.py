@@ -1,7 +1,8 @@
 from enum import Enum
 
 from serial import Serial
-from utils import get_packet
+
+from ch9329.utils import get_packet
 
 HEAD = b"\x57\xab"  # Frame header
 ADDR = b"\x00"  # Address
@@ -73,6 +74,42 @@ def set_device_descriptors(
     # successfully set
     expected_packet = b"W\xab\x00\x8b\x01\x00\x8e"
     return return_packet == expected_packet  # Compare and return result
+
+
+def get_parameters(ser: Serial):
+    # this packet is sent to ch9329 in response to which it sends the
+    # current configuration
+    packet = get_packet(
+        HEAD, ADDR, CMD_GET_PARA_CFG, LEN_GET_PARA_CFG, DATA_GET_PARA_CFG
+    )
+    ser.write(packet)
+    return ser.readline()
+
+
+def get_usb_string(ser: Serial, descriptor: USBStringDescriptor):
+    packet = get_packet(
+        HEAD,
+        ADDR,
+        CMD_GET_USB_STRING,
+        LEN_GET_USB_STRING,
+        descriptor.value,
+    )
+    ser.write(packet)
+    data = ser.readline()
+    length = data[6]
+    return data[7 : 7 + length].decode()
+
+
+def get_serial_number(ser: Serial):
+    return get_usb_string(ser, USBStringDescriptor.SERIAL_NUMBER)
+
+
+def get_manufacturer(ser: Serial):
+    return get_usb_string(ser, USBStringDescriptor.MANUFACTURER)
+
+
+def get_product(ser: Serial):
+    return get_usb_string(ser, USBStringDescriptor.PRODUCT)
 
 
 def set_device_ids(
