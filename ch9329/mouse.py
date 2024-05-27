@@ -29,17 +29,34 @@ def send_data_absolute(
     ctrl: str = "null",
     x_max: int = 1920,
     y_max: int = 1080,
+    wheel_delta: int = 0,
 ) -> None:
+    # CMD_SEND_MS_ABS_DATA has exactly 7 bytes
+
+    # first byte is alwasys 0x02
     data = b"\x02"
+
+    # second byte is mouse button value
     data += ctrl_to_hex_mapping[ctrl]
+
+    # third and fourth bytes are x-coordinates
     x_cur = (4096 * x) // x_max
-    y_cur = (4096 * y) // y_max
     data += x_cur.to_bytes(2, byteorder="little")
+
+    # fifth and sixth bytes are y-coordinates
+    y_cur = (4096 * y) // y_max
     data += y_cur.to_bytes(2, byteorder="little")
-    if len(data) < 7:
-        data += b"\x00" * (7 - len(data))
-    else:
-        data = data[:7]
+
+    # seventh byte contains wheel data
+    # If it is 0x00, it means there is no scrolling action
+    # 0x01-0x7F, means scrolling upward
+    # 0x81-0xFF, means scroll down
+    if abs(wheel_delta) > 127:
+        raise RuntimeError("Maximum wheel delta allowed is 127.")
+    if wheel_delta >= 0:
+        data += (0x00 + wheel_delta).to_bytes(1)
+    elif wheel_delta < 0:
+        data += (0x100 + wheel_delta).to_bytes(1)
     packet = get_packet(HEAD, ADDR, CMD_ABS, LEN_ABS, data)
     ser.write(packet)
 
@@ -92,3 +109,7 @@ def click(ser: Serial, button: str = "left") -> None:
     # 100 to 450 milliseconds delay for simulating natural behavior
     time.sleep(random.uniform(0.1, 0.45))
     release(ser)
+
+
+def wheel(ser: Serial, wheel: int = 1) -> None:
+    send_data_absolute(ser, 0, 0, wheel_delta=wheel)
