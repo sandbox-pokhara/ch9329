@@ -90,6 +90,7 @@ def get_parameters(ser: Serial):
 
 
 def get_usb_string(ser: Serial, descriptor: USBStringDescriptor):
+    ser.readall()  # clear old packets
     packet = get_packet(
         HEAD,
         ADDR,
