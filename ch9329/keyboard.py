@@ -92,6 +92,12 @@ def send(
 
 
 def press(ser: Serial, key: str, modifiers: List[Modifier] = []) -> None:
+    if key not in HID_MAPPING:
+        raise InvalidKey(key)
+    _, shift = HID_MAPPING[key]
+    if shift:
+        modifiers = modifiers.copy()
+        modifiers.append("shift")
     send(ser, (key, "", "", "", "", ""), modifiers)
 
 
@@ -106,12 +112,6 @@ def press_and_release(
     min_interval: float = 0.02,
     max_interval: float = 0.05,
 ) -> None:
-    if key not in HID_MAPPING:
-        raise InvalidKey(key)
-    _, shift = HID_MAPPING[key]
-    if shift:
-        modifiers = modifiers.copy()
-        modifiers.append("shift")
     press(ser, key, modifiers)
     time.sleep(uniform(min_interval, max_interval))
     release(ser)
