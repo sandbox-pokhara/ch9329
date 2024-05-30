@@ -21,9 +21,9 @@ from ch9329.config import get_manufacturer
 from ch9329.config import get_product
 from ch9329.config import get_serial_number
 
-ser = Serial("COM3", 9600, timeout=1)
+ser = Serial("COM3", 9600, timeout=0.05)
 
-keyboard.press_and_release(ser, "a", modifier="ctrl")
+keyboard.press_and_release(ser, "a", modifiers=["ctrl"])
 keyboard.write(ser, "Hello World\n")
 keyboard.write(ser, "abcdefghijklmnopqrstuvwxyz\n")
 keyboard.write(ser, "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n")
