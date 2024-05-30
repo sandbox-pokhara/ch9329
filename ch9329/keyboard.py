@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+from random import uniform
 from typing import List
 from typing import Literal
 from typing import Tuple
@@ -99,16 +100,29 @@ def release(ser: Serial) -> None:
 
 
 def press_and_release(
-    ser: Serial, key: str, modifiers: List[Modifier] = []
+    ser: Serial,
+    key: str,
+    modifiers: List[Modifier] = [],
+    min_interval: float = 0.02,
+    max_interval: float = 0.05,
 ) -> None:
+    if key not in HID_MAPPING:
+        raise InvalidKey(key)
+    _, shift = HID_MAPPING[key]
+    if shift:
+        modifiers = modifiers.copy()
+        modifiers.append("shift")
     press(ser, key, modifiers)
+    time.sleep(uniform(min_interval, max_interval))
     release(ser)
 
 
-def write(ser: Serial, text: str, interval: float = 0.1) -> None:
+def write(
+    ser: Serial,
+    text: str,
+    min_interval: float = 0.02,
+    max_interval: float = 0.05,
+) -> None:
     for char in text:
-        if char not in HID_MAPPING:
-            raise InvalidKey(char)
-        _, shift = HID_MAPPING[char]
-        press_and_release(ser, char, ["shift"] if shift else [])
-        time.sleep(interval)
+        press_and_release(ser, char, [], min_interval, max_interval)
+        time.sleep(uniform(min_interval, max_interval))
