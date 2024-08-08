@@ -100,7 +100,7 @@ def get_usb_string(ser: Serial, descriptor: USBStringDescriptor):
     )
     ser.write(packet)
     data = ser.readall()
-    if not data:
+    if len(data) < 7:
         return ""
     length = data[6]
     return data[7 : 7 + length].decode()
