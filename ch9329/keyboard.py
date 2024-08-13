@@ -10,6 +10,7 @@ from serial import Serial
 
 from ch9329.exceptions import InvalidKey
 from ch9329.exceptions import InvalidModifier
+from ch9329.exceptions import TooManyKeysError
 from ch9329.hid import HID_MAPPING
 from ch9329.utils import get_packet
 
@@ -115,6 +116,40 @@ def press_and_release(
     press(ser, key, modifiers)
     time.sleep(uniform(min_interval, max_interval))
     release(ser)
+
+
+def trigger_keys(
+    ser: Serial, keys: list[str], modifiers: List[Modifier] = []
+) -> None:
+    press_keys = keys.copy()
+    press_modifiers = modifiers.copy()
+    press_keys = list(set(press_keys))
+    press_modifiers = list(set(press_modifiers))
+    # Supports press to 6 normal buttons at the same time
+    press_keys = press_keys[:6]
+    if len(press_keys) > 6:
+        raise TooManyKeysError(
+            "CH9329 supports maximum of 6 keys to be pressed at once."
+        )
+    if len(modifiers) > 8:
+        raise TooManyKeysError(
+            "CH9329 supports maximum of 8 control keys to be pressed at once."
+        )
+    # if len(keys) <= 6, add empty keys
+    while len(press_keys) != 6:
+        press_keys.append("")
+    send(
+        ser,
+        (
+            press_keys[0],
+            press_keys[1],
+            press_keys[2],
+            press_keys[3],
+            press_keys[4],
+            press_keys[5],
+        ),
+        press_modifiers,
+    )
 
 
 def write(

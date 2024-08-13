@@ -4,3 +4,7 @@ class InvalidModifier(Exception):
 
 class InvalidKey(Exception):
     pass
+
+
+class TooManyKeysError(Exception):
+    pass
