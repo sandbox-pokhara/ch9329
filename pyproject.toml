@@ -21,6 +21,9 @@ Issues = "https://github.com/sandbox-pokhara/ch9329/issues"
 [project.scripts]
 lsch9329 = "ch9329.tools.lsch9329:main"
 
+[project.optional-dependencies]
+dev = ["pytest"]
+
 [tool.setuptools]
 include-package-data = true
 

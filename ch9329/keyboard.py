@@ -126,7 +126,6 @@ def trigger_keys(
     press_keys = list(set(press_keys))
     press_modifiers = list(set(press_modifiers))
     # Supports press to 6 normal buttons at the same time
-    press_keys = press_keys[:6]
     if len(press_keys) > 6:
         raise TooManyKeysError(
             "CH9329 supports maximum of 6 keys to be pressed at once."
