@@ -33,6 +33,17 @@ keyboard.write(ser, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~\n")
 mouse.move(ser, x=500, y=500)
 mouse.move(ser, x=50, y=50, relative=True)
 mouse.click(ser, button="left")
+# On some devices
+# Maybe you need to enter full coordinates for mouse clicks
+mouse.click(
+    ser,
+    button="left",
+    x=50,
+    y=50,
+    relative=False,
+    monitor_width=1920,
+    monitor_height=1080
+)
 
 print(get_serial_number(ser))
 # 20193152CFBF
