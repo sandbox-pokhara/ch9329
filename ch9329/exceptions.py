@@ -8,3 +8,7 @@ class InvalidKey(Exception):
 
 class TooManyKeysError(Exception):
     pass
+
+
+class ProtocolError(Exception):
+    pass

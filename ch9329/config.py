@@ -3,6 +3,7 @@ from enum import Enum
 from serial import Serial
 
 from ch9329.utils import get_packet
+from ch9329.exceptions import ProtocolError
 
 HEAD = b"\x57\xab"  # Frame header
 ADDR = b"\x00"  # Address
@@ -32,10 +33,8 @@ CMD_SET_USB_STRING = b"\x0b"
 def set_device_descriptors(
     ser: Serial, descriptor_type: USBStringDescriptor, description: str
 ):
-    if (
-        len(description) > 23
-    ):  # length of description should not be more than 23
-        return False
+    if len(description) > 23:
+        raise ValueError("length of description should not be more than 23")
 
     description_bytes = description.encode("utf-8")
     packet = get_packet(
@@ -73,7 +72,8 @@ def set_device_descriptors(
     # this packet is expected in response when the VID and PID are
     # successfully set
     expected_packet = b"W\xab\x00\x8b\x01\x00\x8e"
-    return return_packet == expected_packet  # Compare and return result
+    if return_packet != expected_packet:
+        raise ProtocolError(f"expected: {expected_packet}, received: {return_packet}")
 
 
 def get_parameters(ser: Serial):
@@ -85,7 +85,7 @@ def get_parameters(ser: Serial):
     ser.write(packet)
     data = ser.readall()
     if not data:
-        return ""
+        raise ProtocolError(f"expected a response, received nothing")
     return data
 
 
@@ -101,7 +101,7 @@ def get_usb_string(ser: Serial, descriptor: USBStringDescriptor):
     ser.write(packet)
     data = ser.readall()
     if len(data) < 7:
-        return ""
+        raise ProtocolError(f"expected a response of a least 7 bytes, received {len(data)} bytes")
     length = data[6]
     return data[7 : 7 + length].decode()
 
@@ -150,4 +150,5 @@ def set_device_ids(
     # this packet is expected in response when the VID and PID are
     # successfully set
     expected_packet = b"W\xab\x00\x89\x01\x00\x8c"
-    return return_packet == expected_packet  # Compare and return result
+    if return_packet != expected_packet:
+        raise ProtocolError(f"expected a response of a least 7 bytes, received {len(data)} bytes")
