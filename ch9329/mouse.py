@@ -96,16 +96,35 @@ def move(
         send_data_absolute(ser, x, y, "null", monitor_width, monitor_height)
 
 
-def press(ser: Serial, button: str = "left") -> None:
-    send_data_absolute(ser, 0, 0, button)
+def press(
+    ser: Serial,
+    button: str = "left",
+    x: int = 0,
+    y: int = 0,
+    relative: bool = False,
+    monitor_width: int = 1920,
+    monitor_height: int = 1080
+) -> None:
+    if relative:
+        send_data_relative(ser, x, y, button)
+    else:
+        send_data_absolute(ser, x, y, button, monitor_width, monitor_height)
 
 
 def release(ser: Serial) -> None:
     send_data_absolute(ser, 0, 0, "null")
 
 
-def click(ser: Serial, button: str = "left") -> None:
-    press(ser, button)
+def click(
+    ser: Serial,
+    button: str = "left",
+    x: int = 0,
+    y: int = 0,
+    relative: bool = False,
+    monitor_width: int = 1920,
+    monitor_height: int = 1080
+) -> None:
+    press(ser, button, x, y, relative, monitor_width, monitor_height)
     # 100 to 450 milliseconds delay for simulating natural behavior
     time.sleep(random.uniform(0.1, 0.45))
     release(ser)
