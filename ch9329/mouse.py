@@ -22,6 +22,21 @@ LEN_ABS = b"\x07"  # Data length for absolute
 LEN_REL = b"\x05"  # Data length for relative
 
 
+def wheel_int_to_bytes(wheel_delta: int):
+    """
+    Convert wheel_delta human readable integer to ch9329 readable bytes
+    """
+    # If the it is 0x00, it means there is no scrolling action
+    # 0x01-0x7F, means scrolling upward
+    # 0x81-0xFF, means scroll down
+    if abs(wheel_delta) > 127:
+        raise RuntimeError("Maximum wheel delta allowed is 127.")
+    if wheel_delta >= 0:
+        return (0x00 + wheel_delta).to_bytes(1)
+    else:
+        return (0x100 + wheel_delta).to_bytes(1)
+
+
 def send_data_absolute(
     ser: Serial,
     x: int,
@@ -48,15 +63,8 @@ def send_data_absolute(
     data += y_cur.to_bytes(2, byteorder="little")
 
     # seventh byte contains wheel data
-    # If it is 0x00, it means there is no scrolling action
-    # 0x01-0x7F, means scrolling upward
-    # 0x81-0xFF, means scroll down
-    if abs(wheel_delta) > 127:
-        raise RuntimeError("Maximum wheel delta allowed is 127.")
-    if wheel_delta >= 0:
-        data += (0x00 + wheel_delta).to_bytes(1)
-    elif wheel_delta < 0:
-        data += (0x100 + wheel_delta).to_bytes(1)
+    data += wheel_int_to_bytes(wheel_delta)
+
     packet = get_packet(HEAD, ADDR, CMD_ABS, LEN_ABS, data)
     ser.write(packet)
 
@@ -64,28 +72,26 @@ def send_data_absolute(
 def send_data_relative(
     ser: Serial, x: int, y: int, ctrl: str = "null", wheel_delta: int = 0
 ) -> None:
+    # first byte is alwasys 0x01
     data = b"\x01"
+
+    # second byte is mouse button value
     data += ctrl_to_hex_mapping[ctrl]
+
+    # third byte is x distance
     if x < 0:
         data += (0 - abs(x)).to_bytes(1, byteorder="big", signed=True)
     else:
         data += x.to_bytes(1, byteorder="big", signed=True)
 
+    # forth byte is y distance
     if y < 0:
         data += (0 - abs(y)).to_bytes(1, byteorder="big", signed=True)
     else:
         data += y.to_bytes(1, byteorder="big", signed=True)
 
-    # seventh byte contains wheel data
-    # If it is 0x00, it means there is no scrolling action
-    # 0x01-0x7F, means scrolling upward
-    # 0x81-0xFF, means scroll down
-    if abs(wheel_delta) > 127:
-        raise RuntimeError("Maximum wheel delta allowed is 127.")
-    if wheel_delta >= 0:
-        data += (0x00 + wheel_delta).to_bytes(1)
-    elif wheel_delta < 0:
-        data += (0x100 + wheel_delta).to_bytes(1)
+    # fifth byte contains wheel data
+    data += wheel_int_to_bytes(wheel_delta)
 
     packet = get_packet(HEAD, ADDR, CMD_REL, LEN_REL, data)
     ser.write(packet)
