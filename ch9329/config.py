@@ -2,8 +2,8 @@ from enum import Enum
 
 from serial import Serial
 
-from ch9329.utils import get_packet
 from ch9329.exceptions import ProtocolError
+from ch9329.utils import get_packet
 
 HEAD = b"\x57\xab"  # Frame header
 ADDR = b"\x00"  # Address
@@ -73,7 +73,9 @@ def set_device_descriptors(
     # successfully set
     expected_packet = b"W\xab\x00\x8b\x01\x00\x8e"
     if return_packet != expected_packet:
-        raise ProtocolError(f"expected: {expected_packet}, received: {return_packet}")
+        raise ProtocolError(
+            f"expected: {expected_packet}, received: {return_packet}"
+        )
 
 
 def get_parameters(ser: Serial):
@@ -101,7 +103,9 @@ def get_usb_string(ser: Serial, descriptor: USBStringDescriptor):
     ser.write(packet)
     data = ser.readall()
     if len(data) < 7:
-        raise ProtocolError(f"expected a response of a least 7 bytes, received {len(data)} bytes")
+        raise ProtocolError(
+            f"expected a response of a least 7 bytes, received {len(data)} bytes"
+        )
     length = data[6]
     return data[7 : 7 + length].decode()
 
@@ -120,7 +124,7 @@ def get_product(ser: Serial):
 
 def set_device_ids(
     ser: Serial, vid: int, pid: int, custom_descriptor: bool = False
-) -> bool:
+):
     # this packet is sent to ch9329 in response to which it sends the
     # current configuration
     packet = get_packet(
@@ -151,4 +155,6 @@ def set_device_ids(
     # successfully set
     expected_packet = b"W\xab\x00\x89\x01\x00\x8c"
     if return_packet != expected_packet:
-        raise ProtocolError(f"expected a response of a least 7 bytes, received {len(data)} bytes")
+        raise ProtocolError(
+            f"expected response {expected_packet}, received {return_packet}"
+        )
