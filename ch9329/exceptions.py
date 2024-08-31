@@ -1,14 +1,18 @@
-class InvalidModifier(Exception):
+class CH9329Error(Exception):
     pass
 
 
-class InvalidKey(Exception):
+class InvalidModifier(CH9329Error):
     pass
 
 
-class TooManyKeysError(Exception):
+class InvalidKey(CH9329Error):
     pass
 
 
-class ProtocolError(Exception):
+class TooManyKeysError(CH9329Error):
+    pass
+
+
+class ProtocolError(CH9329Error):
     pass
