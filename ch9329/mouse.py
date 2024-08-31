@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import random
 import time
+from typing import Literal
 
 from serial import Serial
 
 from ch9329.utils import get_packet
 
-ctrl_to_hex_mapping = {
+MouseCtrl = Literal["null", "left", "right", "center"]
+
+ctrl_to_hex_mapping: dict[MouseCtrl, bytes] = {
     "null": b"\x00",
     "left": b"\x01",
     "right": b"\x02",
@@ -41,7 +44,7 @@ def send_data_absolute(
     ser: Serial,
     x: int,
     y: int,
-    ctrl: str = "null",
+    ctrl: MouseCtrl = "null",
     x_max: int = 1920,
     y_max: int = 1080,
     wheel_delta: int = 0,
@@ -70,7 +73,7 @@ def send_data_absolute(
 
 
 def send_data_relative(
-    ser: Serial, x: int, y: int, ctrl: str = "null", wheel_delta: int = 0
+    ser: Serial, x: int, y: int, ctrl: MouseCtrl = "null", wheel_delta: int = 0
 ) -> None:
     # first byte is alwasys 0x01
     data = b"\x01"
@@ -111,7 +114,7 @@ def move(
         send_data_absolute(ser, x, y, "null", monitor_width, monitor_height)
 
 
-def press(ser: Serial, button: str = "left") -> None:
+def press(ser: Serial, button: MouseCtrl = "left") -> None:
     send_data_relative(ser, 0, 0, button)
 
 
@@ -119,7 +122,7 @@ def release(ser: Serial) -> None:
     send_data_relative(ser, 0, 0, "null")
 
 
-def click(ser: Serial, button: str = "left") -> None:
+def click(ser: Serial, button: MouseCtrl = "left") -> None:
     press(ser, button)
     # 100 to 450 milliseconds delay for simulating natural behavior
     time.sleep(random.uniform(0.1, 0.45))
