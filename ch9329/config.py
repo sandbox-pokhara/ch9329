@@ -4,6 +4,7 @@ from serial import Serial
 
 from ch9329.exceptions import ProtocolError
 from ch9329.utils import get_packet
+import struct
 
 HEAD = b"\x57\xab"  # Frame header
 ADDR = b"\x00"  # Address
@@ -28,6 +29,31 @@ class USBStringDescriptor(Enum):
 
 
 CMD_SET_USB_STRING = b"\x0b"
+
+
+class Configuration(bytearray):
+    def _create_property(fmt, offset):
+        def getter(self):
+            return struct.unpack_from(fmt, self, offset)[0]
+
+        def setter(self, value):
+            struct.pack_into(fmt, self, offset, value)
+
+        return property(getter, setter)
+
+    cmd: int = _create_property("B", 3)
+    chip_working_mode: int = _create_property("B", 5)
+    serial_comm_mode: int = _create_property("B", 6)
+    serial_comm_address: int = _create_property("B", 7)
+    serial_comm_baud_rate: int = _create_property(">L", 8)
+    serial_comm_packet_interval: int = _create_property(">H", 14)
+    usb_vid: int = _create_property("<H", 16)
+    usb_pid: int = _create_property("<H", 18)
+    usb_keyboard_upload_interval: int = _create_property(">H", 20)
+    usb_keyboard_release_delay: int = _create_property(">H", 22)
+    usb_keyboard_automatic_return: int = _create_property("B", 24)
+    usb_string_enable: int = _create_property("B", 41)
+    usb_fast_upload: int = _create_property("B", 42)
 
 
 def set_device_descriptors(
@@ -88,7 +114,7 @@ def get_parameters(ser: Serial):
     data = ser.readall()
     if not data:
         raise ProtocolError(f"expected a response, received nothing")
-    return data
+    return Configuration(data)
 
 
 def get_usb_string(ser: Serial, descriptor: USBStringDescriptor):
