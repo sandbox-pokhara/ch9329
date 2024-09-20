@@ -1,10 +1,11 @@
+import struct
 from enum import Enum
+from typing import Any
 
 from serial import Serial
 
 from ch9329.exceptions import ProtocolError
 from ch9329.utils import get_packet
-import struct
 
 HEAD = b"\x57\xab"  # Frame header
 ADDR = b"\x00"  # Address
@@ -32,11 +33,12 @@ CMD_SET_USB_STRING = b"\x0b"
 
 
 class Configuration(bytearray):
-    def _create_property(fmt, offset):
-        def getter(self):
+    @staticmethod
+    def _create_property(fmt: str, offset: int) -> Any:
+        def getter(self: "Configuration") -> Any:
             return struct.unpack_from(fmt, self, offset)[0]
 
-        def setter(self, value):
+        def setter(self: "Configuration", value: Any) -> None:
             struct.pack_into(fmt, self, offset, value)
 
         return property(getter, setter)
